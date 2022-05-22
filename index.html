@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <form id="upload">
+        <label for="file">File to upload</label>
+        <input type="file" id="file" accept=".json">
+
+        <button>Upload</button>
+    </form>
+
+    <button id="export">Export demo data to JSON file</button>
+    <script>
+        // Get the form and file field
+        let form = document.querySelector('#upload');
+        let file = document.querySelector('#file');
+        let export_button = document.querySelector('#export');
+
+        form.addEventListener('submit', xulyForm);
+
+        function xulyForm(e) {
+            //cam sự kiện submit mặc định
+            e.preventDefault();
+
+            //neu chua chọn file - file.value.length = 0 - không làm gì cả
+            if (!file.value.length) return;
+
+            //tạo một reader object để đọc file
+            let reader = new FileReader();
+            //Setup the callback event to run when the file is read
+
+            reader.readAsText(file.files[0]); //dọc file đầu tiên
+
+            reader.onload = xulyFile;
+        }
+
+        function xulyFile(e) {
+            let noidung = e.target.result;
+            console.log(noidung);
+            let json_noidung = JSON.parse(noidung);
+            console.log(json_noidung);
+        }
+
+        //xu ly export data ra file json
+        function exportToJsonFile(jsonData, exportfilename) {
+            let dataStr = JSON.stringify(jsonData);
+            let dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+
+            let exportFileDefaultName = exportfilename; // 'data.json';
+
+            let linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+        }
+
+        let data_demo = {
+            name: "Bui Cong Thanh",
+            age: 20,
+            country: "Viet Nam",
+            job: "IT"
+        }
+
+        export_button.addEventListener('click', function() {
+            exportToJsonFile(data_demo, "thanh.json");
+        });
+    </script>
+</body>
+
+</html>
